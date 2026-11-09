@@ -242,7 +242,7 @@ function makeVariant({ id, label, editor, chrome, border, top, offset }) {
 // Off-white was chosen over pure white (2026-11-08).
 const variants = [
   makeVariant({
-    id: '', label: 'Cherry Blossom Light',
+    id: '', label: 'Night Sakura Light',
     editor: '#faf8f5', chrome: '#f1eeea', border: '#e3ded8',
     top: [[86, 93.5], [88, 95], [92, 97.6], [100, 99]],
     offset: [2, 0, -3],

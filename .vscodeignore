@@ -11,3 +11,4 @@ preview.js
 build-report.txt
 .gitignore
 *.vsix
+images/icon.svg

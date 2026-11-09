@@ -1,17 +1,14 @@
-# Cherry Blossom
+# Night Sakura
 
-Dark and light VS Code themes in the black, gray and cherry-blossom pink of [cassie7511.github.io](https://cassie7511.github.io).
+Dark and light VS Code themes in black, gray and cherry-blossom pink.
 
-![Cherry Blossom dark and light](docs/preview.png)
+![Dark theme](docs/dark.png)
+
+![Light theme](docs/light.png)
 
 ## Install
 
-```
-npx --yes @vscode/vsce package --allow-missing-repository
-code --install-extension cherry-blossom-0.3.1.vsix
-```
-
-Then pick **Cherry Blossom** or **Cherry Blossom Light** with Ctrl+K Ctrl+T.
+Install **Night Sakura** from the Extensions view, then pick **Night Sakura** or **Night Sakura Light** with Ctrl+K Ctrl+T.
 
 ## Change a color
 

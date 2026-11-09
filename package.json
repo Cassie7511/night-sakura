@@ -1,13 +1,22 @@
 {
   "name": "cherry-blossom",
-  "displayName": "Cherry Blossom",
+  "displayName": "Night Sakura",
   "description": "Dark and light VS Code themes in black, gray and cherry-blossom pink.",
-  "version": "0.3.1",
-  "publisher": "hunter-local",
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#0d0d0f",
+    "theme": "dark"
+  },
+  "version": "0.4.0",
+  "publisher": "Cassie11",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/Cassie7511/cherry-blossom-theme"
+  },
+  "homepage": "https://cassie7511.github.io/Projects/cherry-blossom-theme/index.html",
+  "bugs": {
+    "url": "https://github.com/Cassie7511/cherry-blossom-theme/issues"
   },
   "engines": {
     "vscode": "^1.70.0"
@@ -15,20 +24,29 @@
   "categories": [
     "Themes"
   ],
+  "keywords": [
+    "theme",
+    "dark theme",
+    "light theme",
+    "pink",
+    "cherry blossom",
+    "sakura",
+    "claude code"
+  ],
   "scripts": {
     "build": "node build.js",
     "preview": "node preview.js",
-    "package": "npx --yes @vscode/vsce package --allow-missing-repository"
+    "package": "npx --yes @vscode/vsce package"
   },
   "contributes": {
     "themes": [
       {
-        "label": "Cherry Blossom",
+        "label": "Night Sakura",
         "uiTheme": "vs-dark",
         "path": "./themes/cherry-blossom-color-theme.json"
       },
       {
-        "label": "Cherry Blossom Light",
+        "label": "Night Sakura Light",
         "uiTheme": "vs",
         "path": "./themes/cherry-blossom-light-color-theme.json"
       }

@@ -80,7 +80,7 @@ const codeRoles = {
 const variants = [
   {
     id: '',
-    label: 'Cherry Blossom',
+    label: 'Night Sakura',
     keyword: soft.lavender,       // if, def, return, class, const...
     keywordMod: dims.lavenderDim, // var / let / const, storage modifiers
     func: site.pink,              // function and method names
