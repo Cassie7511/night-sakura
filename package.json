@@ -12,11 +12,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Cassie7511/cherry-blossom-theme"
+    "url": "https://github.com/Cassie7511/night-sakura"
   },
   "homepage": "https://cassie7511.github.io/Projects/night-sakura/index.html",
   "bugs": {
-    "url": "https://github.com/Cassie7511/cherry-blossom-theme/issues"
+    "url": "https://github.com/Cassie7511/night-sakura/issues"
   },
   "engines": {
     "vscode": "^1.70.0"
