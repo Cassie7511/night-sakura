@@ -251,7 +251,7 @@ const variants = [
 
 module.exports = {
   template: 'base-light.json',
-  filePrefix: 'cherry-blossom-light',
+  filePrefix: 'night-sakura-light',
   uiTheme: 'vs',
   type: 'light',
   rolesFrom: { palette: './palette', ruleAliases },

@@ -1,5 +1,5 @@
 {
-  "name": "cherry-blossom",
+  "name": "night-sakura",
   "displayName": "Night Sakura",
   "description": "Dark and light VS Code themes in black, gray and cherry-blossom pink.",
   "icon": "images/icon.png",
@@ -14,7 +14,7 @@
     "type": "git",
     "url": "https://github.com/Cassie7511/cherry-blossom-theme"
   },
-  "homepage": "https://cassie7511.github.io/Projects/cherry-blossom-theme/index.html",
+  "homepage": "https://cassie7511.github.io/Projects/night-sakura/index.html",
   "bugs": {
     "url": "https://github.com/Cassie7511/cherry-blossom-theme/issues"
   },
@@ -43,12 +43,12 @@
       {
         "label": "Night Sakura",
         "uiTheme": "vs-dark",
-        "path": "./themes/cherry-blossom-color-theme.json"
+        "path": "./themes/night-sakura-color-theme.json"
       },
       {
         "label": "Night Sakura Light",
         "uiTheme": "vs",
-        "path": "./themes/cherry-blossom-light-color-theme.json"
+        "path": "./themes/night-sakura-light-color-theme.json"
       }
     ]
   }

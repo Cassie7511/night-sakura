@@ -322,7 +322,7 @@ function main() {
   }
   const keep = new Set(results.map(r => r.file));
   for (const f of fs.readdirSync(THEMES)) {
-    if (/^cherry-blossom.*-color-theme\.json$/.test(f) && !keep.has(f)) { fs.unlinkSync(path.join(THEMES, f)); console.log(`removed stale ${f}`); }
+    if (/-color-theme\.json$/.test(f) && !keep.has(f)) { fs.unlinkSync(path.join(THEMES, f)); console.log(`removed stale ${f}`); }
   }
 
   // package.json theme list follows the palettes' variants

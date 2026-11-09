@@ -290,7 +290,7 @@ const neutralTint = { hue: 240, sat: 5 };
 
 module.exports = {
   template: 'base-dark.json', // in vendor/
-  filePrefix: 'cherry-blossom',
+  filePrefix: 'night-sakura',
   uiTheme: 'vs-dark',
   type: 'dark',
   site, soft, dims, codeRoles, variants, codeHexRoles, codeRuleOverrides,

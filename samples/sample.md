@@ -1,4 +1,4 @@
-# Cherry Blossom
+# Night Sakura
 
 A personal dark theme in the palette of [my site](https://cassie7511.github.io).
 

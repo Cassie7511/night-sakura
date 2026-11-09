@@ -1,5 +1,5 @@
 {
-  "name": "cherry-blossom",
+  "name": "night-sakura",
   "version": "0.1.0",
   "private": true,
   "swatches": [
@@ -8,7 +8,7 @@
   ],
   "settings": {
     "workbench": {
-      "colorTheme": "Cherry Blossom",
+      "colorTheme": "Night Sakura",
       "nested": { "depth": 3, "deeper": { "depth": 4 } }
     }
   }
