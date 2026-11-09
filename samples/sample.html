@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hunter Delaney &mdash; projects</title>
+  <link rel="stylesheet" href="sample.css">
+</head>
+<body class="wide">
+  <!-- header: the pink accent sits on the last name -->
+  <header>
+    <h1>Hunter <span class="accent">Delaney</span></h1>
+    <nav>
+      <a href="#projects">projects</a>
+      <a href="resume.pdf" target="_blank" rel="noopener">resume</a>
+    </nav>
+  </header>
+
+  <section id="projects">
+    <div class="card" data-tags="python,qualtrics">
+      <h3>Better Behavior Foundation Academic Paper</h3>
+      <p>Built realistic booking flows with custom HTML/JavaScript.</p>
+      <a class="more" href="Projects/bbf-paper/">read paper &rarr;</a>
+    </div>
+  </section>
+
+  <script>
+    document.querySelectorAll('.card').forEach(card => card.classList.add('ready'));
+  </script>
+</body>
+</html>

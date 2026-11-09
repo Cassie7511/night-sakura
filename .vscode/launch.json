@@ -1,0 +1,17 @@
+{
+  // F5 opens a second VS Code window with this theme loaded, showing the samples folder.
+  // CAUTION: that window shares your real settings. Choosing the theme there before it is
+  // installed makes your normal windows fall back to the default theme. Prefer `node preview.js`.
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Preview theme",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "${workspaceFolder}/samples"
+      ]
+    }
+  ]
+}

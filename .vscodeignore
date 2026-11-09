@@ -1,0 +1,11 @@
+.vscode/**
+.preview-profile/**
+samples/**
+docs/**
+.gitignore
+vendor/tokyo-night-color-theme.json
+build.js
+palette.js
+preview.js
+build-report.txt
+*.vsix

@@ -1,0 +1,15 @@
+{
+  "name": "cherry-blossom",
+  "version": "0.1.0",
+  "private": true,
+  "swatches": [
+    { "id": "bg", "hex": "#0d0d0f", "accent": false, "contrast": [1, 1.2] },
+    { "id": "pink", "hex": "#f6b3c5", "accent": true, "contrast": null }
+  ],
+  "settings": {
+    "workbench": {
+      "colorTheme": "Cherry Blossom",
+      "nested": { "depth": 3, "deeper": { "depth": 4 } }
+    }
+  }
+}
