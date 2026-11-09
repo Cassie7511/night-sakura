@@ -12,9 +12,8 @@
 const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const P = require('./palette');
-
 const root = __dirname;
+const labels = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')).contributes.themes.map(t => t.label);
 const profile = path.join(root, '.preview-profile');
 const userDir = path.join(profile, 'User');
 fs.mkdirSync(userDir, { recursive: true });
@@ -22,7 +21,7 @@ fs.mkdirSync(userDir, { recursive: true });
 const settingsFile = path.join(userDir, 'settings.json');
 let settings = {};
 try { settings = JSON.parse(fs.readFileSync(settingsFile, 'utf8')); } catch { /* first run */ }
-if (!P.variants.some(v => v.label === settings['workbench.colorTheme'])) settings['workbench.colorTheme'] = P.variants[0].label;
+if (!labels.includes(settings['workbench.colorTheme'])) settings['workbench.colorTheme'] = labels[0];
 Object.assign(settings, {
   'workbench.startupEditor': 'none',
   'security.workspace.trust.enabled': false,

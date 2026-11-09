@@ -1,24 +1,24 @@
 #!/usr/bin/env node
-// build.js: regenerates themes/*.json from vendor/tokyo-night-color-theme.json + palette.js.
+// build.js: regenerates themes/*.json from the palette files and the Tokyo Night templates.
 //
 //   node build.js
 //
-// Only colors change: every UI key, token rule, scope and font style of Tokyo Night is kept.
-// The build REFUSES to write if any check fails:
-//   1. every Tokyo color is mapped (nothing silently stays blue)
+// Palette files (one per theme family): palette.js (dark), palette-light.js (light).
+// Each recolors its Tokyo Night template; every UI key, token rule, scope and font style is kept.
+// The build REFUSES to write if any check fails, for any theme:
+//   1. every template color is mapped (nothing silently keeps a Tokyo color)
 //   2. no blue remains (hue 175-255 with saturation > 15%)
-//   3. code colors are readable on the editor background (4.5:1; comments 3:1)
+//   3. code colors are readable on the editor background (4.5:1; comments/punctuation 3:1)
 //   4. key UI text/background pairs are readable
-//   5. structure is identical to Tokyo Night (same keys, same token rules in the same order)
-// It also rewrites package.json's theme list to match palette.variants and writes
-// build-report.txt (every old -> new mapping).
+//   5. structure is identical to the template (same keys, same token rules in the same order)
+// It also rewrites package.json's theme list and writes build-report.txt (every old -> new mapping).
 
 const fs = require('fs');
 const path = require('path');
-const P = require('./palette');
 
 const ROOT = __dirname;
-const TEMPLATE = path.join(ROOT, 'vendor', 'tokyo-night-color-theme.json');
+const PALETTES = ['./palette', './palette-light'];
+const VENDOR = path.join(ROOT, 'vendor');
 const THEMES = path.join(ROOT, 'themes');
 const PKG = path.join(ROOT, 'package.json');
 const REPORT = path.join(ROOT, 'build-report.txt');
@@ -41,6 +41,7 @@ function stripJsonc(s) {
   }
   return out.replace(/,(\s*[}\]])/g, '$1');
 }
+const loadTemplate = file => JSON.parse(stripJsonc(fs.readFileSync(path.join(VENDOR, file), 'utf8')));
 
 // ---------- color math ----------
 const HEX = /^#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
@@ -50,6 +51,7 @@ function split(hex) { // -> { base: '#rrggbb', alpha: '' | 'aa' }
   return { base: h.slice(0, 7), alpha: h.length === 9 ? h.slice(7) : '' };
 }
 const rgb = hex => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
+const toHex = a => '#' + a.map(v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0')).join('');
 function hsl(hex) {
   const [r, g, b] = rgb(hex).map(v => v / 255);
   const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2;
@@ -66,7 +68,7 @@ function fromHsl(h, s, l) {
   s /= 100; l /= 100;
   const k = n => (n + h / 30) % 12, a = s * Math.min(l, 1 - l);
   const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1));
-  return '#' + [f(0), f(8), f(4)].map(v => Math.round(v * 255).toString(16).padStart(2, '0')).join('');
+  return toHex([f(0), f(8), f(4)].map(v => v * 255));
 }
 function lum(hex) {
   const [r, g, b] = rgb(hex).map(v => { v /= 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; });
@@ -77,21 +79,27 @@ function over(hex, bg) { // composite a possibly-translucent color over an opaqu
   const { base, alpha } = split(hex);
   if (!alpha) return base;
   const a = parseInt(alpha, 16) / 255, f = rgb(base), g = rgb(bg);
-  return '#' + f.map((v, i) => Math.round(v * a + g[i] * (1 - a)).toString(16).padStart(2, '0')).join('');
+  return toHex(f.map((v, i) => v * a + g[i] * (1 - a)));
 }
-const isBlue = hex => { const c = hsl(hex); return c.h >= 175 && c.h <= 255 && c.s > 15; };
+// Blue = blue hue, saturated, AND visibly colored. HSL saturation alone balloons near white and
+// black: #f5f5f8 (channels 3/255 apart, the site's own faint cool cast) reads as 18% saturated.
+// Requiring > 6/255 between channels keeps real blues failing (#1a1b26 is 12, #7aa2f7 is 125).
+const chroma = hex => { const v = rgb(hex); return Math.max(...v) - Math.min(...v); };
+const isBlue = hex => { const c = hsl(hex); return c.h >= 175 && c.h <= 255 && c.s > 15 && chroma(hex) > 6; };
 
-// Tokyo's blue-grays (and true grays) -> the site's cool gray, by lightness.
-function neutral(base) {
+// Template blue-grays (and true grays) -> the palette's tinted gray, by lightness.
+function neutral(base, cfg) {
   const c = hsl(base);
   const blueGray = c.h >= 200 && c.h <= 250 && c.s < 45;
   if (!(c.s < 20 || blueGray)) return null;
-  const r = P.neutralRamp;
+  const r = cfg.neutralRamp;
   let L = c.l;
   for (let i = 1; i < r.length; i++) {
     if (c.l <= r[i][0]) { const [x0, y0] = r[i - 1], [x1, y1] = r[i]; L = y0 + (y1 - y0) * (c.l - x0) / (x1 - x0); break; }
   }
-  return fromHsl(P.neutralTint.hue, P.neutralTint.sat, L);
+  const t = cfg.neutralTint;
+  if (t.rgbOffset) { const v = L * 2.55; return toHex(t.rgbOffset.map(o => v + o)); }
+  return fromHsl(t.hue, t.sat, L);
 }
 
 // ---------- mapping ----------
@@ -100,19 +108,19 @@ function withAlpha(newBase, srcAlpha) {
   return n.base + (n.alpha || srcAlpha);
 }
 
-function mapUi(key, value, log, errors) {
+function mapUi(key, value, cfg, log, errors) {
   if (typeof value !== 'string' || !HEX.test(value)) return value;
   const { base, alpha } = split(value);
   let out, how;
-  if (key in P.uiKeyOverrides) {
-    const o = P.uiKeyOverrides[key];
+  if (key in cfg.uiKeyOverrides) {
+    const o = cfg.uiKeyOverrides[key];
     out = o.length === 9 ? o.toLowerCase() : withAlpha(o, alpha); how = 'key';
-  } else if (base === P.borderSource && P.borderKeyPattern.test(key)) {
-    out = withAlpha(P.site.border, alpha); how = 'border';
-  } else if (base in P.uiHexMap) {
-    out = withAlpha(P.uiHexMap[base], alpha); how = 'map';
+  } else if (cfg.borderSource && base === cfg.borderSource && cfg.borderKeyPattern.test(key)) {
+    out = withAlpha(cfg.site.border, alpha); how = 'border';
+  } else if (base in cfg.uiHexMap) {
+    out = withAlpha(cfg.uiHexMap[base], alpha); how = 'map';
   } else {
-    const g = neutral(base);
+    const g = neutral(base, cfg);
     if (g) { out = withAlpha(g, alpha); how = 'auto'; }
   }
   if (!out) { errors.push(`unmapped UI color ${value} on "${key}"`); return value; }
@@ -122,51 +130,87 @@ function mapUi(key, value, log, errors) {
 
 function resolveRole(role, roles) {
   if (role.startsWith('#')) return role.toLowerCase();
-  if (!(role in roles)) throw new Error(`palette.js: unknown role "${role}"`);
+  if (!(role in roles)) throw new Error(`palette: unknown role "${role}"`);
   return roles[role].toLowerCase();
 }
 
-function mapCode(where, ruleName, value, roles, log, errors) {
+// role sources, in order: explicit override -> role borrowed from another palette -> hex -> gray
+function mapCode(where, value, picks, cfg, roles, log, errors) {
   if (typeof value !== 'string' || !HEX.test(value)) return value;
   const { base, alpha } = split(value);
-  let out, how, role;
-  if (ruleName && ruleName in P.codeRuleOverrides) { role = P.codeRuleOverrides[ruleName]; how = 'rule'; }
-  else if (base in P.codeHexRoles) { role = P.codeHexRoles[base]; how = 'role'; }
+  let role, how;
+  for (const [r, h] of picks) if (r) { role = r; how = h; break; }
+  if (!role && base in cfg.codeHexRoles) { role = cfg.codeHexRoles[base]; how = 'role'; }
+  let out;
   if (role) out = withAlpha(resolveRole(role, roles), alpha);
-  else { const g = neutral(base); if (g) { out = withAlpha(g, alpha); how = 'auto'; role = 'neutral'; } }
+  else { const g = neutral(base, cfg); if (g) { out = withAlpha(g, alpha); how = 'auto'; role = 'neutral'; } }
   if (!out) { errors.push(`unmapped code color ${value} on ${where}`); return value; }
   log.push({ kind: 'code', where, from: value.toLowerCase(), to: out, how, role });
   return out;
 }
 
+// Roles another palette gives each token rule (by name + occurrence) and semantic key.
+function borrowedRoles(M) {
+  if (!M.rolesFrom) return { rule: new Map(), semantic: {} };
+  const src = require(M.rolesFrom.palette);
+  const t = loadTemplate(src.template);
+  const rule = new Map(), seen = {};
+  for (const r of t.tokenColors) {
+    const k = `${r.name}#${seen[r.name] = (seen[r.name] || 0) + 1}`;
+    const fg = r.settings && r.settings.foreground;
+    if (!fg) continue;
+    const role = (src.codeRuleOverrides || {})[r.name] || src.codeHexRoles[split(fg).base];
+    if (role) rule.set(k, role);
+  }
+  const semantic = {};
+  for (const [k, v] of Object.entries(t.semanticTokenColors || {})) {
+    const fg = typeof v === 'string' ? v : v && v.foreground;
+    if (fg && src.codeHexRoles[split(fg).base]) semantic[k] = src.codeHexRoles[split(fg).base];
+  }
+  return { rule, semantic };
+}
+
 // ---------- build one variant ----------
-function buildVariant(template, variant) {
+function buildVariant(M, template, borrowed, variant) {
+  const cfg = { ...M, ...variant };
   const t = JSON.parse(JSON.stringify(template));
-  const roles = { ...P.codeRoles, ...variant };
+  const roles = { ...cfg.codeRoles, ...variant };
+  const aliases = (M.rolesFrom && M.rolesFrom.ruleAliases) || {};
+  const ruleOv = cfg.codeRuleOverrides || {}, semOv = cfg.semanticOverrides || {};
   const log = [], errors = [];
 
   t.name = variant.label;
+  t.type = cfg.type;
   t.author = 'Hunter Delaney (palette); structure from Tokyo Night by enkia (MIT)';
   delete t.maintainers;
 
-  for (const k of Object.keys(t.colors)) t.colors[k] = mapUi(k, t.colors[k], log, errors);
-  for (const k of Object.keys(P.uiKeyOverrides)) {
-    if (!(k in t.colors)) { t.colors[k] = P.uiKeyOverrides[k].toLowerCase(); log.push({ kind: 'ui', where: k, from: '(added)', to: t.colors[k], how: 'add' }); }
+  for (const k of Object.keys(t.colors)) t.colors[k] = mapUi(k, t.colors[k], cfg, log, errors);
+  for (const k of Object.keys(cfg.uiKeyOverrides)) {
+    if (!(k in t.colors)) { t.colors[k] = cfg.uiKeyOverrides[k].toLowerCase(); log.push({ kind: 'ui', where: k, from: '(added)', to: t.colors[k], how: 'add' }); }
   }
+  const seen = {};
   t.tokenColors.forEach((r, i) => {
+    const name = aliases[r.name] || r.name;
+    const key = `${name}#${seen[name] = (seen[name] || 0) + 1}`;
     for (const p of ['foreground', 'background']) {
-      if (r.settings && r.settings[p]) r.settings[p] = mapCode(`rule ${i} "${r.name}" ${p}`, r.name, r.settings[p], roles, log, errors);
+      if (r.settings && r.settings[p]) {
+        r.settings[p] = mapCode(`rule ${i} "${r.name}" ${p}`, r.settings[p],
+          [[ruleOv[r.name], 'rule'], [borrowed.rule.get(key), 'borrowed']], cfg, roles, log, errors);
+      }
     }
   });
-  for (const [k, v] of Object.entries(t.semanticTokenColors || {})) {
-    if (typeof v === 'string') t.semanticTokenColors[k] = mapCode(`semantic "${k}"`, null, v, roles, log, errors);
-    else if (v && v.foreground) v.foreground = mapCode(`semantic "${k}"`, null, v.foreground, roles, log, errors);
+  for (const block of ['semanticTokenColors', 'tokenColorCustomizations']) {
+    for (const [k, v] of Object.entries(t[block] || {})) {
+      const picks = [[semOv[k], 'semantic'], [borrowed.semantic[k], 'borrowed']];
+      if (typeof v === 'string') t[block][k] = mapCode(`${block} "${k}"`, v, picks, cfg, roles, log, errors);
+      else if (v && v.foreground) v.foreground = mapCode(`${block} "${k}"`, v.foreground, picks, cfg, roles, log, errors);
+    }
   }
-  return { theme: t, log, errors: [...errors, ...check(template, t, log)] };
+  return { theme: t, log, errors: [...errors, ...check(template, t, log, cfg)] };
 }
 
 // ---------- checks ----------
-function check(template, t, log) {
+function check(template, t, log, cfg) {
   const errs = [];
   const editorBg = split(t.colors['editor.background']).base;
 
@@ -174,7 +218,7 @@ function check(template, t, log) {
   for (const e of log) if (isBlue(split(e.to).base)) errs.push(`blue survives: ${e.to} on ${e.where} (from ${e.from})`);
 
   // 3. code readability on the editor background
-  for (const e of log.filter(x => x.kind === 'code' && x.where.endsWith('foreground') || x.kind === 'code' && x.where.startsWith('semantic'))) {
+  for (const e of log.filter(x => x.kind === 'code' && !x.where.endsWith('background'))) {
     const dimOk = /comment|separator|blockquote|punctuation|heading 6/i.test(e.where);
     const min = dimOk ? 3 : 4.5;
     const c = contrast(over(e.to, editorBg), editorBg);
@@ -190,6 +234,8 @@ function check(template, t, log) {
     ['tab.inactiveForeground', 'tab.inactiveBackground', 3],
     ['button.foreground', 'button.background', 4.5],
     ['button.foreground', 'button.hoverBackground', 4.5],
+    ['button.foreground', 'errorForeground', 4.5],   // Claude Code's auto-mode send button
+    ['errorForeground', 'editor.background', 4.5],   // error text / auto-mode icon
     ['activityBarBadge.foreground', 'activityBarBadge.background', 4.5],
     ['list.activeSelectionForeground', 'list.activeSelectionBackground', 4.5],
     ['editorLineNumber.activeForeground', 'editor.background', 3],
@@ -204,9 +250,9 @@ function check(template, t, log) {
     if (c < min) errs.push(`low UI contrast ${c.toFixed(2)}:1 (< ${min}): ${fg} ${t.colors[fg]} on ${bg} ${t.colors[bg]}`);
   }
 
-  // 5. structure: same keys and token rules as Tokyo Night (only colors may differ)
+  // 5. structure: same keys and token rules as the template (only colors may differ)
   for (const k of Object.keys(template.colors)) if (!(k in t.colors)) errs.push(`UI key dropped: ${k}`);
-  const extra = Object.keys(t.colors).filter(k => !(k in template.colors) && !(k in P.uiKeyOverrides));
+  const extra = Object.keys(t.colors).filter(k => !(k in template.colors) && !(k in cfg.uiKeyOverrides));
   if (extra.length) errs.push(`unexpected UI keys: ${extra.join(', ')}`);
   if (template.tokenColors.length !== t.tokenColors.length) errs.push('token rule count changed');
   template.tokenColors.forEach((r, i) => {
@@ -214,20 +260,27 @@ function check(template, t, log) {
     if (!o || o.name !== r.name || JSON.stringify(o.scope) !== JSON.stringify(r.scope) ||
         (o.settings || {}).fontStyle !== (r.settings || {}).fontStyle) errs.push(`token rule ${i} "${r.name}" changed shape`);
   });
-  if (JSON.stringify(Object.keys(template.semanticTokenColors || {})) !== JSON.stringify(Object.keys(t.semanticTokenColors || {})))
-    errs.push('semanticTokenColors keys changed');
+  for (const block of ['semanticTokenColors', 'tokenColorCustomizations']) {
+    if (JSON.stringify(Object.keys(template[block] || {})) !== JSON.stringify(Object.keys(t[block] || {}))) errs.push(`${block} keys changed`);
+  }
   if (template.semanticHighlighting !== t.semanticHighlighting) errs.push('semanticHighlighting changed');
   return errs;
 }
 
 // ---------- main ----------
 function main() {
-  const template = JSON.parse(stripJsonc(fs.readFileSync(TEMPLATE, 'utf8')));
-  const ids = P.variants.map(v => v.id);
-  if (new Set(ids).size !== ids.length) { console.error('palette.js: duplicate variant ids'); process.exit(1); }
-
-  const fileFor = v => `cherry-blossom${v.id ? '-' + v.id : ''}-color-theme.json`;
-  const results = P.variants.map(v => ({ v, file: fileFor(v), ...buildVariant(template, v) }));
+  const results = [];
+  for (const file of PALETTES) {
+    const M = require(file);
+    const ids = M.variants.map(v => v.id);
+    if (new Set(ids).size !== ids.length) { console.error(`${file}: duplicate variant ids`); process.exit(1); }
+    const template = loadTemplate(M.template);
+    const borrowed = borrowedRoles(M);
+    for (const v of M.variants) {
+      const out = `${M.filePrefix}${v.id ? '-' + v.id : ''}-color-theme.json`;
+      results.push({ v, file: out, uiTheme: M.uiTheme, ...buildVariant(M, template, borrowed, v) });
+    }
+  }
 
   const failed = results.filter(r => r.errors.length);
   if (failed.length) {
@@ -242,7 +295,7 @@ function main() {
 
   // write themes, remove stale generated ones
   fs.mkdirSync(THEMES, { recursive: true });
-  const header = '// GENERATED by build.js from palette.js + vendor/tokyo-night-color-theme.json. Do not edit by hand.\n';
+  const header = '// GENERATED by build.js from the palette files + vendor/ templates. Do not edit by hand.\n';
   for (const r of results) {
     const json = JSON.stringify(r.theme, null, 2);
     JSON.parse(json); // valid JSON
@@ -253,9 +306,9 @@ function main() {
     if (/^cherry-blossom.*-color-theme\.json$/.test(f) && !keep.has(f)) { fs.unlinkSync(path.join(THEMES, f)); console.log(`removed stale ${f}`); }
   }
 
-  // package.json theme list follows palette.variants
+  // package.json theme list follows the palettes' variants
   const pkg = JSON.parse(fs.readFileSync(PKG, 'utf8'));
-  const themes = results.map(r => ({ label: r.v.label, uiTheme: 'vs-dark', path: `./themes/${r.file}` }));
+  const themes = results.map(r => ({ label: r.v.label, uiTheme: r.uiTheme, path: `./themes/${r.file}` }));
   if (JSON.stringify(pkg.contributes.themes) !== JSON.stringify(themes)) {
     pkg.contributes.themes = themes;
     fs.writeFileSync(PKG, JSON.stringify(pkg, null, 2) + '\n');

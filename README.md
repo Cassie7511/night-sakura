@@ -1,22 +1,27 @@
 # Cherry Blossom
 
-A personal dark VS Code theme in the palette of [cassie7511.github.io](https://cassie7511.github.io):
+A personal VS Code theme, dark and light, in the palette of [cassie7511.github.io](https://cassie7511.github.io):
 near-black, grays, and occasional cherry-blossom pink, with a few soft companion colors for code.
 
-![Variant A (pink keywords) and variant B (pink functions) side by side](docs/preview.png)
+![Cherry Blossom (dark) and Cherry Blossom Light side by side](docs/preview.png)
 
 It is **Tokyo Night with the colors swapped**. Every UI key, code-coloring rule and italic from
 Tokyo Night is kept, so the same parts of the code and interface get color. Only the colors change,
 and none of them are blue.
 
-Two variants are included while one gets picked: **A** puts the pink on keywords, **B** on
-function names.
+**Cherry Blossom** (dark) puts the pink on function names, with soft lavender keywords.
+**Cherry Blossom Light** is built the same way from Tokyo Night Light, on a warm off-white
+(`#faf8f5`) with warm grays. On a light background the site's pastels are deepened so they stay
+readable, and the pastel pink is kept for buttons and badges.
+
+In the Claude Code panel, **auto mode** shows in pink and **plan mode** in violet.
 
 ## Files
 
 | File | What it is |
 |---|---|
-| `palette.js` | **The only file to edit.** Site colors, companions, and the maps from Tokyo Night's colors to these |
+| `palette.js` | **The dark theme's colors.** Site colors, companions, and the maps from Tokyo Night's colors to these |
+| `palette-light.js` | **The light theme's colors.** Borrows the dark theme's choice of what gets which color, rule by rule |
 | `build.js` | Generates `themes/*.json` from Tokyo Night + `palette.js`, checks the result, rewrites the theme list in `package.json` |
 | `preview.js` | Opens a separate preview window with the theme loaded |
 | `themes/` | Generated. Never edit by hand |
@@ -27,7 +32,7 @@ function names.
 
 ## Tweak a color
 
-1. Edit a hex in `palette.js`.
+1. Edit a hex in `palette.js` (dark) or `palette-light.js` (light).
 2. `node build.js`
 3. An open preview window updates on its own.
 
@@ -52,8 +57,8 @@ The preview window keeps its own settings in `.preview-profile/`, so switching t
 
 ```
 npx --yes @vscode/vsce package --allow-missing-repository
-code --install-extension cherry-blossom-0.1.0.vsix
+code --install-extension cherry-blossom-0.2.0.vsix
 ```
 
-Then pick **Cherry Blossom** with Ctrl+K Ctrl+T. To update it later, bump `version` in
+Then pick **Cherry Blossom** or **Cherry Blossom Light** with Ctrl+K Ctrl+T. To update it later, bump `version` in
 `package.json`, then package and install again.

@@ -1,4 +1,4 @@
-// palette.js: the ONLY file to edit when tuning the theme.
+// palette.js: the DARK theme's palette (palette-light.js holds the light theme).
 // Edit a hex here, run `node build.js`, and the generated themes/*.json update.
 //
 // Site colors are copied verbatim from cassie7511.github.io/style.css.
@@ -75,25 +75,16 @@ const codeRoles = {
   muted:        site.muted,
 };
 
-// A/B review: the only difference is which of keyword / function / support gets the pink.
-// After review, delete the variant you don't want and set the survivor's id to '' and label to
-// 'Cherry Blossom'. build.js rewrites package.json's theme list to match this array.
+// The final dark theme: pink on function names (chosen over pink keywords, 2026-11-08).
+// build.js rewrites package.json's theme list from the variants of every palette file.
 const variants = [
   {
-    id: 'a',
-    label: 'Cherry Blossom A · pink keywords',
-    keyword: site.pink,       // if, def, return, class, const...
-    keywordMod: site.pinkDim, // var / let / const, storage modifiers
-    func: site.white,         // function and method names
-    support: soft.lavender,   // classes, built-ins, imports, properties
-  },
-  {
-    id: 'b',
-    label: 'Cherry Blossom B · pink functions',
-    keyword: soft.lavender,
-    keywordMod: dims.lavenderDim,
-    func: site.pink,
-    support: '#ececf0',
+    id: '',
+    label: 'Cherry Blossom',
+    keyword: soft.lavender,       // if, def, return, class, const...
+    keywordMod: dims.lavenderDim, // var / let / const, storage modifiers
+    func: site.pink,              // function and method names
+    support: '#ececf0',           // classes, built-ins, imports, properties
   },
 ];
 
@@ -185,17 +176,20 @@ const uiKeyOverrides = {
   'terminalCursor.foreground': site.pink,
   'activityBar.activeBorder': site.pink,
   'list.activeSelectionForeground': site.pink, // like the site's .sideitem.active
-  'focusBorder': site.pinkDim + '55',
+  // Claude Code permission modes (2026-11-08): auto mode is drawn in VS Code's errorForeground,
+  // plan mode in button.background (+ focusBorder for its input outline). Auto = pink, plan = violet.
+  'errorForeground': site.pink,      // auto mode; also VS Code / Claude panel error text
+  'focusBorder': soft.lavender + '55', // plan mode's input outline; focus outlines everywhere
   'list.hoverBackground': '#141417', // the lightness conversion leaves it 1 shade off the sidebar: invisible
   'textLink.activeForeground': site.pinkDim,   // the site's link hover
 
-  // buttons and badges: pink with near-black text, like the site's .btn:hover.
+  // buttons: violet with near-black text (also Claude Code's plan mode); badges stay pink.
   // Solid ('ff'): Tokyo's buttons are translucent, which would make the hover darker than the button.
-  'button.background': site.pinkDim + 'ff',
-  'button.hoverBackground': site.pink + 'ff',
+  'button.background': soft.lavender + 'ff',
+  'button.hoverBackground': '#d2bef1ff',
   'button.foreground': site.bg,
-  'extensionButton.prominentBackground': site.pinkDim + 'ff',
-  'extensionButton.prominentHoverBackground': site.pink + 'ff',
+  'extensionButton.prominentBackground': soft.lavender + 'ff',
+  'extensionButton.prominentHoverBackground': '#d2bef1ff',
   'extensionButton.prominentForeground': site.bg,
   'activityBarBadge.foreground': site.bg,
   'extensionBadge.remoteForeground': site.bg,
@@ -252,6 +246,10 @@ const neutralRamp = [
 const neutralTint = { hue: 240, sat: 5 };
 
 module.exports = {
+  template: 'tokyo-night-color-theme.json', // in vendor/
+  filePrefix: 'cherry-blossom',
+  uiTheme: 'vs-dark',
+  type: 'dark',
   site, soft, dims, codeRoles, variants, codeHexRoles, codeRuleOverrides,
   uiHexMap, uiKeyOverrides, borderSource, borderKeyPattern, neutralRamp, neutralTint,
 };

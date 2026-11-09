@@ -1,8 +1,8 @@
 {
   "name": "cherry-blossom",
   "displayName": "Cherry Blossom",
-  "description": "Personal dark theme in the black / gray / cherry-blossom-pink palette of cassie7511.github.io, built on Tokyo Night's structure.",
-  "version": "0.1.0",
+  "description": "Personal dark and light themes in the black / gray / cherry-blossom-pink palette of cassie7511.github.io, built on Tokyo Night's structure.",
+  "version": "0.2.0",
   "publisher": "hunter-local",
   "license": "MIT",
   "repository": {
@@ -23,14 +23,14 @@
   "contributes": {
     "themes": [
       {
-        "label": "Cherry Blossom A · pink keywords",
+        "label": "Cherry Blossom",
         "uiTheme": "vs-dark",
-        "path": "./themes/cherry-blossom-a-color-theme.json"
+        "path": "./themes/cherry-blossom-color-theme.json"
       },
       {
-        "label": "Cherry Blossom B · pink functions",
-        "uiTheme": "vs-dark",
-        "path": "./themes/cherry-blossom-b-color-theme.json"
+        "label": "Cherry Blossom Light",
+        "uiTheme": "vs",
+        "path": "./themes/cherry-blossom-light-color-theme.json"
       }
     ]
   }

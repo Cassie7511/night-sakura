@@ -2,10 +2,12 @@
 .preview-profile/**
 samples/**
 docs/**
-.gitignore
 vendor/tokyo-night-color-theme.json
+vendor/tokyo-night-light-color-theme.json
 build.js
 palette.js
+palette-light.js
 preview.js
 build-report.txt
+.gitignore
 *.vsix
