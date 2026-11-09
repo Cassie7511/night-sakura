@@ -22,6 +22,6 @@ SOFTWARE.
 
 ---
 
-The generated theme files are derived from Tokyo Night
+The theme files are built from Tokyo Night by Enkia
 (https://github.com/enkia/tokyo-night-vscode-theme), Copyright (c) 2018-present Enkia,
-also MIT licensed. Its license is included as vendor/TOKYO-NIGHT-LICENSE.txt.
+also MIT licensed. Its license is in vendor/BASE-THEME-LICENSE.txt.

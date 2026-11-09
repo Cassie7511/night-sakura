@@ -2,8 +2,8 @@
 .preview-profile/**
 samples/**
 docs/**
-vendor/tokyo-night-color-theme.json
-vendor/tokyo-night-light-color-theme.json
+vendor/base-dark.json
+vendor/base-light.json
 build.js
 palette.js
 palette-light.js

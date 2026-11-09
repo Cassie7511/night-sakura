@@ -1,7 +1,7 @@
 // palette-light.js: the LIGHT theme's palette. Edit a hex here, then `node build.js`.
 //
-// Structure comes from Tokyo Night Light (vendor/tokyo-night-light-color-theme.json, MIT).
-// Code colors follow the DARK theme's decisions rule by rule: build.js looks up each Tokyo
+// Structure comes from a light base theme (vendor/base-light.json, MIT).
+// Code colors follow the DARK theme's decisions rule by rule: build.js looks up each template
 // rule by name in the dark template and gives it the same role (keyword, function, string...)
 // it has in palette.js. Only the colors behind the roles differ: on white, the site's pastels
 // (#f6b3c5 is 1.6:1 on white) become deeper versions of the same hues so text stays readable.
@@ -70,7 +70,7 @@ const codeRoles = {
   muted:        ink.muted,
 };
 
-// Tokyo Light rules whose names differ from the dark theme's, or that only exist here.
+// Light-template rules whose names differ from the dark theme's, or that only exist here.
 const ruleAliases = { 'Interpolation / PHP tags / Smarty tags': 'Interpolation, PHP tags, Smarty tags' };
 const codeRuleOverrides = {
   'Tag Punctuation - Custom': 'tagPunct',
@@ -78,17 +78,17 @@ const codeRuleOverrides = {
 };
 // Semantic / customization keys whose dark color makes no sense on white.
 const semanticOverrides = {
-  'parameter': '#5c4a3a',         // dark theme keeps Tokyo's warm off-white; here a warm dark brown
+  'parameter': '#5c4a3a',         // dark theme keeps the template's warm off-white; here a warm dark brown
   'property.readonly': 'keywordMod',
   'variable.local': 'variable',
 };
 
-// Tokyo Light UI hex -> new hex, shared by both variants. Structural grays are added per variant.
+// Light-template UI hex -> new hex, shared by both variants. Structural grays are added per variant.
 const sharedUiMap = {
   '#363c4d': ink.text, '#343b58': ink.text, '#343b59': ink.text,
   '#707280': ink.muted,
   '#ffffff': '#ffffff', '#000000': '#000000',
-  // Tokyo Light's accent blue -> pink
+  // The light template's accent blue -> pink
   '#2959aa': cherry.pink,
   '#7b43ba': cherry.pink,
   // other blues / purples -> violet (info, hints, git "modified", debug icons)
@@ -143,7 +143,7 @@ const uiKeyOverrides = {
   'menu.selectionBackground': cherry.blossom,
   'menubar.selectionBackground': cherry.blossom,
 
-  // find: pink tints (Tokyo Light uses its "added" teal here)
+  // find: pink tints (the light template uses its "added" teal here)
   'editor.findMatchBackground': cherry.pink + '40',
   'editor.findMatchHighlightBackground': cherry.pink + '22',
   'editor.findMatchBorder': cherry.pink,
@@ -151,7 +151,7 @@ const uiKeyOverrides = {
   'inputValidation.infoBackground': deep.violet + '22',
   'inputValidation.infoBorder': deep.violet,
 
-  // Tokyo Light reuses its accent blue for these; the dark theme gives them a quiet lavender,
+  // The light template reuses its accent blue for these; the dark theme gives them a quiet lavender,
   // so here they get violet rather than pink
   'gitDecoration.modifiedResourceForeground': deep.violet,
   'gitDecoration.stageModifiedResourceForeground': deep.violet,
@@ -188,8 +188,8 @@ const uiKeyOverrides = {
   'terminal.ansiWhite': ink.muted,       'terminal.ansiBrightWhite': ink.faint,
 };
 
-// Pink highlights, as in the dark theme: where Tokyo Light tints a highlight blue, this tints it
-// pink. Near white a tint at Tokyo's strength barely shows, so the blush is stronger here, and
+// Pink highlights, as in the dark theme: where the light template tints a highlight blue, this tints it
+// pink. Near white a tint at the template's strength barely shows, so the blush is stronger here, and
 // rows/chips/badges use the site's pastel pink as a fill with deep cherry text on top.
 const { blushKeys } = require('./palette');
 const blush = { hue: 344, satScale: 3, keys: [...blushKeys, 'list.hoverBackground'] };
@@ -206,10 +206,10 @@ const pinkHighlights = {
   'list.focusBackground': cherry.blossom + '26',
   'inputOption.activeBorder': cherry.pink,            // focused permission / question dialogs, search boxes
   'editorLineNumber.activeForeground': cherry.pinkDim,
-  'scrollbarSlider.background': '#c98a9b',            // Tokyo Light's are near-gray; keeps its alpha
+  'scrollbarSlider.background': '#c98a9b',            // the light template's are near-gray; keeps its alpha
   'scrollbarSlider.hoverBackground': '#c98a9b',
   'scrollbarSlider.activeBackground': '#c98a9b',
-  // VS Code defaults that are blue and that Tokyo Night Light never sets
+  // VS Code defaults that are blue and that the light template never sets
   'textBlockQuote.border': cherry.pinkDim,
   'editor.hoverHighlightBackground': cherry.blossom + '33',
   'chat.requestCodeBorder': cherry.pink + '40',
@@ -225,7 +225,7 @@ const pinkHighlights = {
     .map(s => [`debugIcon.${s}Foreground`, deep.violet])),
 };
 
-// Neutral conversion (Tokyo Light lightness -> new lightness), then a gray nudged by an RGB
+// Neutral conversion (template lightness -> new lightness), then a gray nudged by an RGB
 // offset: cool for white, warm for off-white. An offset keeps the tint the same strength at
 // every lightness (an HSL saturation would turn mid grays orange).
 const rampBase = [[0, 0], [15, 9], [26, 17], [33, 25], [40, 34], [47, 44], [55, 53], [64, 66], [71, 78], [77, 88], [81, 91]];
@@ -250,7 +250,7 @@ const variants = [
 ];
 
 module.exports = {
-  template: 'tokyo-night-light-color-theme.json',
+  template: 'base-light.json',
   filePrefix: 'cherry-blossom-light',
   uiTheme: 'vs',
   type: 'light',

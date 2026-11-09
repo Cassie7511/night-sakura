@@ -2,8 +2,8 @@
 // Edit a hex here, run `node build.js`, and the generated themes/*.json update.
 //
 // Site colors are copied verbatim from cassie7511.github.io/style.css.
-// Structure (which code scopes and UI parts get color) comes from Tokyo Night
-// (vendor/tokyo-night-color-theme.json, MIT): build.js recolors it through the maps below.
+// Structure (which code scopes and UI parts get color) comes from a base theme
+// (vendor/base-dark.json, MIT): build.js recolors it through the maps below.
 
 // Mix a color toward the editor background: dim('#ffffff', 0.25) is 25% of the way to the bg.
 function dim(hex, k) {
@@ -28,7 +28,7 @@ const soft = {
   sage:     '#b6cfa6', // strings
   peach:    '#f3c7a5', // numbers, constants
   lavender: '#c3a9ec', // classes, built-ins, imports, properties. Violet enough to tell from the pink, not blue
-  butter:   '#e8d3a0', // function parameters (Tokyo Night's warm yellow role)
+  butter:   '#e8d3a0', // function parameters (the template's warm yellow role)
   mint:     '#a8d8c0', // regex, terminal "cyan"
   amber:    '#e6b673', // warnings, terminal "yellow"
   red:      '#f05a64', // errors: deeper and more saturated than the pink so it never reads as a highlight
@@ -44,20 +44,20 @@ const dims = {
 };
 
 // ---------------------------------------------------------------------------------------------
-// CODE: named roles. Tokyo Night's code colors are mapped onto these (codeHexRoles below).
+// CODE: named roles. The template's code colors are mapped onto these (codeHexRoles below).
 // ---------------------------------------------------------------------------------------------
 const codeRoles = {
   text:         site.text,   // untokenized text (editor.foreground)
-  variable:     '#d6d6db',   // variables: a touch brighter than plain text, as in Tokyo Night
+  variable:     '#d6d6db',   // variables: a touch brighter than plain text, as in the template
   textDim:      '#aeaeb5',   // HTML text, color literals
-  comment:      '#6e6e76',   // italic (Tokyo Night's italics are kept)
+  comment:      '#6e6e76',   // italic (the template's italics are kept)
   commentDoc:   '#7a7a82',
   commentDocEm: '#86868e',
   string:       soft.sage,
   number:       soft.peach,
   param:        soft.butter, // function parameters
-  accent2:      site.pinkDim, // Tokyo's red: HTML tags, this/self, spread, CSS units
-  objectKey:    '#dcdce1',   // object-literal keys (Tokyo's teal)
+  accent2:      site.pinkDim, // the template's red: HTML tags, this/self, spread, CSS units
+  objectKey:    '#dcdce1',   // object-literal keys (the template's teal)
   operator:     site.muted,
   punctuation:  site.muted,
   tagPunct:     '#77777f',   // the < > around HTML tags
@@ -88,7 +88,7 @@ const variants = [
   },
 ];
 
-// Tokyo Night code hex -> role name (or a literal hex).
+// Template code hex -> role name (or a literal hex).
 const codeHexRoles = {
   '#51597d': 'comment', '#5a638c': 'commentDoc', '#646e9c': 'commentDocEm', '#4e5579': 'comment',
   '#ff9e64': 'number',
@@ -109,10 +109,10 @@ const codeHexRoles = {
   '#449dab': 'inserted', '#914c54': 'deleted', '#6183bb': 'changed',
   '#b4f9f8': 'regex',
   '#ffdb69': 'warn', '#db4b4b': 'error', '#b267e6': 'debug',
-  '#d9d4cd': '#d9d4cd', // Tokyo's warm off-white for parameter usages (semantic): already not blue, kept
+  '#d9d4cd': '#d9d4cd', // the template's warm off-white for parameter usages (semantic): already not blue, kept
 };
 
-// Specific Tokyo token rules (by their "name") that need a different role than their hex implies.
+// Specific template token rules (by their "name") that need a different role than their hex implies.
 const codeRuleOverrides = {
   'Markdown - Heading 1': 'pink',
   'Markdown - Heading 2': 'pink',
@@ -129,8 +129,8 @@ const codeRuleOverrides = {
 };
 
 // ---------------------------------------------------------------------------------------------
-// UI: Tokyo Night workbench hex -> new hex. Tokyo's alpha (e.g. #3d59a1dd) is kept.
-// Any Tokyo blue-gray NOT listed here is converted automatically by lightness (see neutralRamp).
+// UI: template workbench hex -> new hex. The template's alpha (e.g. #3d59a1dd) is kept.
+// Any template blue-gray NOT listed here is converted automatically by lightness (see neutralRamp).
 // ---------------------------------------------------------------------------------------------
 const uiHexMap = {
   // structure
@@ -142,7 +142,7 @@ const uiHexMap = {
   '#c0cefc': site.text,
   '#ffffff': site.white,
   '#000000': '#000000',
-  // Tokyo's UI accent blue -> pink: active tab marker, badges, progress bar, find matches, links
+  // The template's UI accent blue -> pink: active tab marker, badges, progress bar, find matches, links
   '#3d59a1': site.pink, '#6183bb': site.pink, '#668ac4': site.pink,
   '#29355a': site.pinkDim, // sash hover, focused notebook cell
   '#bb9af7': site.pink,    // overview-ruler word highlights, terminal magenta
@@ -161,7 +161,7 @@ const uiHexMap = {
   '#e0af68': soft.amber, '#bba461': soft.amber, '#e2bd3a': soft.amber, '#ffdb69': soft.amber,
   '#c49a5a': dims.amberDim, '#c2985b': dims.amberDim,
   '#ff9e64': soft.peach, '#c97018': dims.peachDim,
-  // reds -> red. Tokyo's darker reds are already warm, not blue: kept as they are
+  // reds -> red. The template's darker reds are already warm, not blue: kept as they are
   '#db4b4b': soft.red, '#ff5370': soft.red, '#f7768e': soft.red, '#fc7b7b': site.pinkDim,
   '#c24242': '#c24242', '#85353e': '#85353e', '#963c47': '#963c47', '#914c54': '#914c54',
   '#bb616b': '#bb616b', '#a6333f': '#a6333f', '#703438': '#703438', '#823c41': '#823c41',
@@ -169,8 +169,8 @@ const uiHexMap = {
   '#d9d4cd': '#d9d4cd',
 };
 
-// Individual UI keys that need a specific color. A 7-char hex keeps Tokyo's alpha; 9-char replaces it.
-// Keys Tokyo doesn't define are added.
+// Individual UI keys that need a specific color. A 7-char hex keeps the template's alpha; 9-char replaces it.
+// Keys the template doesn't define are added.
 const uiKeyOverrides = {
   'editorCursor.foreground': site.pink,
   'terminalCursor.foreground': site.pink,
@@ -183,7 +183,7 @@ const uiKeyOverrides = {
   'textLink.activeForeground': site.pinkDim,   // the site's link hover
 
   // buttons: violet with near-black text (also Claude Code's plan mode); badges stay pink.
-  // Solid ('ff'): Tokyo's buttons are translucent, which would make the hover darker than the button.
+  // Solid ('ff'): the template's buttons are translucent, which would make the hover darker than the button.
   'button.background': soft.lavender + 'ff',
   'button.hoverBackground': '#d2bef1ff',
   'button.foreground': site.bg,
@@ -232,11 +232,11 @@ const uiKeyOverrides = {
 };
 
 // ---------------------------------------------------------------------------------------------
-// PINK HIGHLIGHTS (chosen 2026-11-08): wherever Tokyo Night puts a blue highlight, this puts pink.
+// PINK HIGHLIGHTS (chosen 2026-11-08): wherever the template puts a blue highlight, this puts pink.
 // Buttons stay violet: Claude Code draws plan mode in button.background.
 // ---------------------------------------------------------------------------------------------
-// Highlights Tokyo tints blue-gray: they keep the gray ramp's lightness but take a pink tint at
-// Tokyo's own strength (build.js `blush`). palette-light.js reuses this list.
+// Highlights the template tints blue-gray: they keep the gray ramp's lightness but take a pink tint at
+// the template's own strength (build.js `blush`). palette-light.js reuses this list.
 const blushKeys = [
   'selection.background', 'editor.selectionBackground', 'editor.inactiveSelectionBackground',
   'editor.selectionHighlightBackground', 'editor.wordHighlightBackground', 'editor.wordHighlightStrongBackground',
@@ -261,7 +261,7 @@ const pinkHighlights = {
   'inputOption.activeBorder': site.pink,           // focused permission / question dialogs, search boxes
   'list.hoverBackground': '#1a1215', // set by hand: converted, it lands 1 shade off the sidebar
   'editorLineNumber.activeForeground': site.pinkDim,
-  // VS Code defaults that are blue and that Tokyo Night never sets
+  // VS Code defaults that are blue and that the template never sets
   'textBlockQuote.border': site.pinkDim,
   'editor.hoverHighlightBackground': site.pink + '1a',
   'chat.requestCodeBorder': site.pink + '55',
@@ -275,12 +275,12 @@ const pinkHighlights = {
     .map(s => [`debugIcon.${s}Foreground`, soft.lavender])),
 };
 
-// Tokyo's #101014 is both its border color and a few dark backgrounds. On keys that are borders
+// The template's #101014 is both its border color and a few dark backgrounds. On keys that are borders
 // it becomes the site's border color; elsewhere it is converted by lightness like other neutrals.
 const borderSource = '#101014';
 const borderKeyPattern = /border$|^editorRuler\.foreground$|^menu\.separatorBackground$/i;
 
-// Neutral conversion: Tokyo HSL lightness -> new lightness (piecewise linear), then a gray with
+// Neutral conversion: template HSL lightness -> new lightness (piecewise linear), then a gray with
 // the site's slight cool tint (hue 240, saturation 5%).
 const neutralRamp = [
   [0, 0], [7, 4], [10, 5.5], [13, 9.6], [15, 12.5], [27, 24], [41, 38],
@@ -289,7 +289,7 @@ const neutralRamp = [
 const neutralTint = { hue: 240, sat: 5 };
 
 module.exports = {
-  template: 'tokyo-night-color-theme.json', // in vendor/
+  template: 'base-dark.json', // in vendor/
   filePrefix: 'cherry-blossom',
   uiTheme: 'vs-dark',
   type: 'dark',

@@ -23,4 +23,4 @@ node build.js
 ---
 
 #### Notes
-1. Tokyo Night's structure, recolored.
+1. One palette file, two themes.

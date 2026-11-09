@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-// build.js: regenerates themes/*.json from the palette files and the Tokyo Night templates.
+// build.js: regenerates themes/*.json from the palette files and the base-theme templates in vendor/.
 //
 //   node build.js
 //
 // Palette files (one per theme family): palette.js (dark), palette-light.js (light).
-// Each recolors its Tokyo Night template; every UI key, token rule, scope and font style is kept.
+// Each recolors its template; every UI key, token rule, scope and font style is kept.
 // The build REFUSES to write if any check fails, for any theme:
-//   1. every template color is mapped (nothing silently keeps a Tokyo color)
+//   1. every template color is mapped (nothing silently keeps a template color)
 //   2. no blue remains (hue 175-255 with saturation > 15%)
 //   3. code colors are readable on the editor background (4.5:1; comments/punctuation 3:1)
 //   4. key UI text/background pairs are readable
@@ -103,9 +103,9 @@ function neutral(base, cfg) {
 }
 
 // ---------- mapping ----------
-// Optional, per variant: `blush: { hue, satScale, keys }`. On those keys a Tokyo blue-gray keeps
-// the lightness the neutral ramp gives it, but takes the blush hue at Tokyo's own saturation
-// (x satScale), so a highlight Tokyo tints blue comes out tinted pink instead of plain gray.
+// Optional, per variant: `blush: { hue, satScale, keys }`. On those keys a template blue-gray keeps
+// the lightness the neutral ramp gives it, but takes the blush hue at the template's own saturation
+// (x satScale), so a highlight the template tints blue comes out tinted pink instead of plain gray.
 function blushed(key, base, cfg) {
   const b = cfg.blush;
   if (!b || !b.keys.includes(key)) return null;
@@ -194,7 +194,8 @@ function buildVariant(M, template, borrowed, variant) {
 
   t.name = variant.label;
   t.type = cfg.type;
-  t.author = 'Hunter Delaney (palette); structure from Tokyo Night by enkia (MIT)';
+  t.author = 'Hunter Delaney';
+  t.semanticClass = M.filePrefix;
   delete t.maintainers;
 
   for (const k of Object.keys(t.colors)) t.colors[k] = mapUi(k, t.colors[k], cfg, log, errors);
