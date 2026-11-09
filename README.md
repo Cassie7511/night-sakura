@@ -8,7 +8,7 @@ Dark and light VS Code themes in black, gray and cherry-blossom pink.
 
 ## Install
 
-Install **Night Sakura** from the Extensions view, then pick **Night Sakura** or **Night Sakura Light** with Ctrl+K Ctrl+T.
+Install **Night Sakura** from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=Cassie11.night-sakura) or the Extensions view, then pick **Night Sakura** or **Night Sakura Light** with Ctrl+K Ctrl+T.
 
 ## Change a color
 
