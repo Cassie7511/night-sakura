@@ -188,6 +188,43 @@ const uiKeyOverrides = {
   'terminal.ansiWhite': ink.muted,       'terminal.ansiBrightWhite': ink.faint,
 };
 
+// Pink highlights, as in the dark theme: where Tokyo Light tints a highlight blue, this tints it
+// pink. Near white a tint at Tokyo's strength barely shows, so the blush is stronger here, and
+// rows/chips/badges use the site's pastel pink as a fill with deep cherry text on top.
+const { blushKeys } = require('./palette');
+const blush = { hue: 344, satScale: 3, keys: [...blushKeys, 'list.hoverBackground'] };
+const pinkHighlights = {
+  // Claude Code panel (and the same spots in VS Code)
+  'textPreformat.foreground': cherry.pinkDeep,        // `inline code` in replies, hovers, markdown preview
+  'textPreformat.background': cherry.blossom + '33',
+  'chat.slashCommandBackground': cherry.blossom + '40', // @-mention chips
+  'chat.slashCommandForeground': cherry.pinkDeep,
+  'badge.background': cherry.blossom + '66',
+  'badge.foreground': cherry.pinkDeep,
+  'list.activeSelectionBackground': cherry.blossom + '40',
+  'list.inactiveSelectionBackground': cherry.blossom + '26',
+  'list.focusBackground': cherry.blossom + '26',
+  'inputOption.activeBorder': cherry.pink,            // focused permission / question dialogs, search boxes
+  'editorLineNumber.activeForeground': cherry.pinkDim,
+  'scrollbarSlider.background': '#c98a9b',            // Tokyo Light's are near-gray; keeps its alpha
+  'scrollbarSlider.hoverBackground': '#c98a9b',
+  'scrollbarSlider.activeBackground': '#c98a9b',
+  // VS Code defaults that are blue and that Tokyo Night Light never sets
+  'textBlockQuote.border': cherry.pinkDim,
+  'editor.hoverHighlightBackground': cherry.blossom + '33',
+  'chat.requestCodeBorder': cherry.pink + '40',
+  'chat.workingProgressStableIconForeground': cherry.pink,
+  'chart.line': cherry.pink,
+  'editorActiveLineNumber.foreground': cherry.pinkDim,
+  'editorLightBulbAutoFix.foreground': deep.violet,
+  'terminalCommandDecoration.successBackground': deep.sage,
+  'debugTokenExpression.type': deep.violet,
+  ...Object.fromEntries(['variable', 'field', 'interface', 'enumeratorMember']
+    .map(s => [`symbolIcon.${s}Foreground`, deep.violet])),
+  ...Object.fromEntries(['pause', 'stepOver', 'stepInto', 'stepOut', 'continue', 'stepBack']
+    .map(s => [`debugIcon.${s}Foreground`, deep.violet])),
+};
+
 // Neutral conversion (Tokyo Light lightness -> new lightness), then a gray nudged by an RGB
 // offset: cool for white, warm for off-white. An offset keeps the tint the same strength at
 // every lightness (an HSL saturation would turn mid grays orange).
@@ -219,5 +256,6 @@ module.exports = {
   type: 'light',
   rolesFrom: { palette: './palette', ruleAliases },
   ink, cherry, deep, codeRoles, codeRuleOverrides, codeHexRoles: {}, semanticOverrides,
-  uiKeyOverrides, borderSource: null, borderKeyPattern: /$^/, variants,
+  uiKeyOverrides: { ...uiKeyOverrides, ...pinkHighlights }, blush,
+  borderSource: null, borderKeyPattern: /$^/, variants,
 };

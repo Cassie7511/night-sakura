@@ -14,7 +14,9 @@ and none of them are blue.
 (`#faf8f5`) with warm grays. On a light background the site's pastels are deepened so they stay
 readable, and the pastel pink is kept for buttons and badges.
 
-In the Claude Code panel, **auto mode** shows in pink and **plan mode** in violet.
+Wherever Tokyo Night tints a highlight blue (selected text, the selected row in lists and menus,
+the current line, scrollbars, badges), these themes tint it pink. In the Claude Code panel,
+`inline code` and @-mention chips are pink, **auto mode** shows in pink and **plan mode** in violet.
 
 ## Files
 
@@ -57,7 +59,7 @@ The preview window keeps its own settings in `.preview-profile/`, so switching t
 
 ```
 npx --yes @vscode/vsce package --allow-missing-repository
-code --install-extension cherry-blossom-0.2.0.vsix
+code --install-extension cherry-blossom-0.3.0.vsix
 ```
 
 Then pick **Cherry Blossom** or **Cherry Blossom Light** with Ctrl+K Ctrl+T. To update it later, bump `version` in

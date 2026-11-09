@@ -180,7 +180,6 @@ const uiKeyOverrides = {
   // plan mode in button.background (+ focusBorder for its input outline). Auto = pink, plan = violet.
   'errorForeground': site.pink,      // auto mode; also VS Code / Claude panel error text
   'focusBorder': soft.lavender + '55', // plan mode's input outline; focus outlines everywhere
-  'list.hoverBackground': '#141417', // the lightness conversion leaves it 1 shade off the sidebar: invisible
   'textLink.activeForeground': site.pinkDim,   // the site's link hover
 
   // buttons: violet with near-black text (also Claude Code's plan mode); badges stay pink.
@@ -232,6 +231,50 @@ const uiKeyOverrides = {
   'terminal.ansiWhite': site.text,       'terminal.ansiBrightWhite': site.white,
 };
 
+// ---------------------------------------------------------------------------------------------
+// PINK HIGHLIGHTS (chosen 2026-11-08): wherever Tokyo Night puts a blue highlight, this puts pink.
+// Buttons stay violet: Claude Code draws plan mode in button.background.
+// ---------------------------------------------------------------------------------------------
+// Highlights Tokyo tints blue-gray: they keep the gray ramp's lightness but take a pink tint at
+// Tokyo's own strength (build.js `blush`). palette-light.js reuses this list.
+const blushKeys = [
+  'selection.background', 'editor.selectionBackground', 'editor.inactiveSelectionBackground',
+  'editor.selectionHighlightBackground', 'editor.wordHighlightBackground', 'editor.wordHighlightStrongBackground',
+  'editor.findRangeHighlightBackground', 'editor.rangeHighlightBackground', 'terminal.selectionBackground',
+  'editor.lineHighlightBackground', 'editorIndentGuide.activeBackground1',
+  'list.activeSelectionBackground', 'list.inactiveSelectionBackground', 'list.focusBackground',
+  'list.dropBackground', 'sideBar.dropBackground', 'editorGroup.dropBackground',
+  'editorSuggestWidget.selectedBackground', 'menu.selectionBackground', 'menubar.selectionBackground',
+  'toolbar.hoverBackground', 'toolbar.activeBackground', 'statusBarItem.hoverBackground',
+  'scrollbarSlider.background', 'scrollbarSlider.hoverBackground', 'scrollbarSlider.activeBackground',
+  'badge.background',
+];
+const blush = { hue: 344, satScale: 1, keys: blushKeys }; // 344 = the site pink's hue
+const pinkHighlights = {
+  // Claude Code panel (and the same spots in VS Code)
+  'textPreformat.foreground': site.pink,           // `inline code` in replies, hovers, markdown preview
+  'textPreformat.background': site.pink + '1a',
+  'chat.slashCommandBackground': site.pink + '22', // @-mention chips (text is already pink)
+  'badge.foreground': site.pink,
+  'menu.selectionForeground': site.pink,
+  'menubar.selectionForeground': site.pink,
+  'inputOption.activeBorder': site.pink,           // focused permission / question dialogs, search boxes
+  'list.hoverBackground': '#1a1215', // set by hand: converted, it lands 1 shade off the sidebar
+  'editorLineNumber.activeForeground': site.pinkDim,
+  // VS Code defaults that are blue and that Tokyo Night never sets
+  'textBlockQuote.border': site.pinkDim,
+  'editor.hoverHighlightBackground': site.pink + '1a',
+  'chat.requestCodeBorder': site.pink + '55',
+  'chat.workingProgressStableIconForeground': site.pink,
+  'chart.line': site.pink,
+  'terminalCommandDecoration.successBackground': soft.sage,
+  'debugTokenExpression.type': soft.lavender,
+  ...Object.fromEntries(['variable', 'field', 'interface', 'enumeratorMember']
+    .map(s => [`symbolIcon.${s}Foreground`, soft.lavender])),
+  ...Object.fromEntries(['pause', 'stepOver', 'stepInto', 'stepOut', 'continue', 'stepBack']
+    .map(s => [`debugIcon.${s}Foreground`, soft.lavender])),
+};
+
 // Tokyo's #101014 is both its border color and a few dark backgrounds. On keys that are borders
 // it becomes the site's border color; elsewhere it is converted by lightness like other neutrals.
 const borderSource = '#101014';
@@ -251,5 +294,6 @@ module.exports = {
   uiTheme: 'vs-dark',
   type: 'dark',
   site, soft, dims, codeRoles, variants, codeHexRoles, codeRuleOverrides,
-  uiHexMap, uiKeyOverrides, borderSource, borderKeyPattern, neutralRamp, neutralTint,
+  uiHexMap, uiKeyOverrides: { ...uiKeyOverrides, ...pinkHighlights },
+  borderSource, borderKeyPattern, neutralRamp, neutralTint, blush, blushKeys,
 };

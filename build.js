@@ -103,6 +103,17 @@ function neutral(base, cfg) {
 }
 
 // ---------- mapping ----------
+// Optional, per variant: `blush: { hue, satScale, keys }`. On those keys a Tokyo blue-gray keeps
+// the lightness the neutral ramp gives it, but takes the blush hue at Tokyo's own saturation
+// (x satScale), so a highlight Tokyo tints blue comes out tinted pink instead of plain gray.
+function blushed(key, base, cfg) {
+  const b = cfg.blush;
+  if (!b || !b.keys.includes(key)) return null;
+  const g = neutral(base, cfg);
+  if (!g) return null;
+  return fromHsl(b.hue, Math.min(60, hsl(base).s * (b.satScale || 1)), hsl(g).l);
+}
+
 function withAlpha(newBase, srcAlpha) {
   const n = split(newBase);
   return n.base + (n.alpha || srcAlpha);
@@ -115,6 +126,8 @@ function mapUi(key, value, cfg, log, errors) {
   if (key in cfg.uiKeyOverrides) {
     const o = cfg.uiKeyOverrides[key];
     out = o.length === 9 ? o.toLowerCase() : withAlpha(o, alpha); how = 'key';
+  } else if (blushed(key, base, cfg)) {
+    out = withAlpha(blushed(key, base, cfg), alpha); how = 'blush';
   } else if (cfg.borderSource && base === cfg.borderSource && cfg.borderKeyPattern.test(key)) {
     out = withAlpha(cfg.site.border, alpha); how = 'border';
   } else if (base in cfg.uiHexMap) {
@@ -243,9 +256,14 @@ function check(template, t, log, cfg) {
     ['editorWarning.foreground', 'editor.background', 3],
     ['terminal.foreground', 'terminal.background', 4.5],
     ...['Red', 'Green', 'Yellow', 'Blue', 'Magenta', 'Cyan', 'White'].map(c => [`terminal.ansi${c}`, 'terminal.background', 4.5]),
+    // checked only where the theme sets both keys (else VS Code's defaults apply)
+    ['textPreformat.foreground', 'textPreformat.background', 4.5, 'optional'], // inline code, Claude Code replies
+    ['badge.foreground', 'badge.background', 4.5, 'optional'],
+    ['menu.selectionForeground', 'menu.selectionBackground', 4.5, 'optional'],
+    ['chat.slashCommandForeground', 'chat.slashCommandBackground', 4.5, 'optional'], // Claude Code @-mention chips
   ];
-  for (const [fg, bg, min] of pairs) {
-    if (!t.colors[fg] || !t.colors[bg]) { errs.push(`missing UI key for contrast pair ${fg} / ${bg}`); continue; }
+  for (const [fg, bg, min, optional] of pairs) {
+    if (!t.colors[fg] || !t.colors[bg]) { if (!optional) errs.push(`missing UI key for contrast pair ${fg} / ${bg}`); continue; }
     const b = over(t.colors[bg], editorBg), f = over(t.colors[fg], b), c = contrast(f, b);
     if (c < min) errs.push(`low UI contrast ${c.toFixed(2)}:1 (< ${min}): ${fg} ${t.colors[fg]} on ${bg} ${t.colors[bg]}`);
   }
